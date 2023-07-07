@@ -42,10 +42,40 @@ def create_post():
     return jsonify({'id' : post.id}), 201 
     
 @app.route("/posts", methods = ['GET'])
-def get_posts():
+def get_all_posts():
     posts = Post.query.all()
     post_dtos = [PostDTO.from_model(post) for post in posts]    
     return jsonify(post_dtos)
+
+@app.route("/posts/<int:id>", methods = ['GET'])
+def get_post(id):
+    post = Post.query.get(id)
+    if post:
+        post_dto = PostDTO.from_model(post)
+        return jsonify(post_dto)
+    else:
+        return jsonify({'message': 'Post not found'}), 404
+
+@app.route("/posts/<int:id>", methods = ['PUT'])
+def update_post(id):
+    post = Post.query.get(id)
+    if post:
+        content = request.get_json()
+        post.content = content['content']
+        db.session.commit()
+        return '', 204
+    else:
+        return jsonify({'message': 'Post not found'}), 404
+
+@app.route("/posts/<int:id>", methods = ['DELETE'])
+def delete_post(id):
+    post = Post.query.get(id)
+    if post:
+        db.session.delete(post)
+        db.session.commit()
+        return '', 204
+    else:
+        return jsonify({'message': 'Post not found'}), 404        
 
  
     
