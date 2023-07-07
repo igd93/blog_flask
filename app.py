@@ -46,6 +46,8 @@ def get_posts():
     posts = Post.query.all()
     post_dtos = [PostDTO.from_model(post) for post in posts]    
     return jsonify(post_dtos)
+
+ 
     
 
 if __name__ == '__main__':
